@@ -5,10 +5,13 @@ using System.Threading.Tasks;
 
 namespace PizzaDeliverOrder2.EntityModels
 {
-    public class PizzaCost
+    public class OrderDetails
     {
+        public int Id { get; set; }
+        public int OrderId { get; set; }
         public int PizzaId { get; set; }
-        public string PizzaName { get; set; }
-        public decimal PizzaPrice { get; set; }
+
+        //Comma seperated ToppingIds
+        public string Toppings { get; set; }
     }
 }

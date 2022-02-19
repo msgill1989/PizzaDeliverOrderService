@@ -9,9 +9,10 @@ namespace PizzaDeliverOrder2.Providers
 {
     public interface IOrderProvider
     {
-        PlaceOrderResponseModel PlaceOrder(PlaceOrderModel placeOrderRequest);
+        PlaceOrderResponseModel PlaceOrder(PlaceOrderRequestModel placeOrderRequest);
 
         DeleteOrderSuccessModel DeleteOrder(int orderId);
-        FinalOrders GetOrderDetails(int orderId);
+        Orders GetOrderDetails(int orderId);
+        UpdateResponseModel UpdateOrder(UpdateOrderRequestModel updateRequest);
     }
 }

@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Transactions;
 
 namespace PizzaDeliverOrder2.Repository
 {
@@ -18,14 +19,14 @@ namespace PizzaDeliverOrder2.Repository
             _context = context;
             _logger = logger;
         }
-        public decimal CalculateCost(PlaceOrderModel placeOrderRequest)
+        public decimal CalculateCost(PlaceOrderRequestModel placeOrderRequest)
         {
             decimal totalCost = 0;
             try
             {
                 foreach (var pizza in placeOrderRequest.Pizzas)
                 {
-                    var pizzaPrice = (from o in _context.PizzaCost where o.PizzaName == pizza.PizzaName select o.PizzaPrice).FirstOrDefault();
+                    var pizzaPrice = (from o in _context.PizzaDetails where o.PizzaName == pizza.PizzaName select o.PizzaCost).FirstOrDefault();
                     totalCost += pizzaPrice;
                 }
             }
@@ -36,22 +37,37 @@ namespace PizzaDeliverOrder2.Repository
             }
             return totalCost;
         }
-        public int InsertFinalOrder(PlaceOrderModel placeOrderRequest, decimal finalCost)
+        public int InsertFinalOrder(PlaceOrderRequestModel placeOrderRequest, decimal finalCost)
         {
-            int orderId;
+            int orderId = 0;
+            bool paymentResponse;
             try
             {
-                var newOrder = new FinalOrders()
+                using (var transaction = _context.Db.BeginTransaction())
                 {
-                    CustomerId = placeOrderRequest.CustomerId,
-                    CustomerName = placeOrderRequest.CustomerName,
-                    OrderCost = finalCost,
-                    OrderDetails = string.Join(',', placeOrderRequest.Pizzas)
-                };
-                _context.FinalOrders.Add(newOrder);
-                _context.SaveChanges();
+                    var newOrder = new Orders()
+                    {
+                        CustomerId = placeOrderRequest.CustomerId,
+                        OrderDate = DateTime.Now,
+                        OrderQuantity = placeOrderRequest.Pizzas.Count()
+                    };
 
-                orderId = newOrder.OrderId;
+                    _context.Orders.Add(newOrder);
+                    _context.SaveChanges();
+                    orderId = newOrder.Id;
+
+                    paymentResponse = ProcessPayment(placeOrderRequest.Payment, finalCost);
+
+                    if (paymentResponse == true)
+                    {
+                        transaction.Commit();
+                    }
+                    else
+                    {
+                        transaction.Rollback();
+                    }
+                }
+
             }
             catch (Exception ex)
             {
@@ -65,7 +81,7 @@ namespace PizzaDeliverOrder2.Repository
         {
             try
             {
-                if (_context.FinalOrders.Any(u => u.OrderId == orderId))
+                if (_context.Orders.Any(u => u.Id == orderId))
                 {
                     return true;
                 }
@@ -86,8 +102,8 @@ namespace PizzaDeliverOrder2.Repository
             int response;
             try
             {
-                var order = (from t in _context.FinalOrders where t.OrderId == orderId select t).FirstOrDefault();
-                _context.FinalOrders.Remove(order);
+                var order = (from t in _context.Orders where t.Id == orderId select t).FirstOrDefault();
+                _context.Orders.Remove(order);
                 response = _context.SaveChanges();
             }
             catch (Exception ex)
@@ -98,12 +114,12 @@ namespace PizzaDeliverOrder2.Repository
             return response;
         }
 
-        public FinalOrders FetchOrderDetails(int orderId)
+        public Orders FetchOrderDetails(int orderId)
         {
-            FinalOrders responseOrder;
+            Orders responseOrder;
             try
             {
-                responseOrder = (from o in _context.FinalOrders where o.OrderId == orderId select o).FirstOrDefault();
+                responseOrder = (from o in _context.Orders where o.Id == orderId select o).FirstOrDefault();
                 return responseOrder;
             }
             catch (Exception ex)
@@ -111,6 +127,69 @@ namespace PizzaDeliverOrder2.Repository
                 _logger.LogError(ex, "Some error happened while fetching order details from Database.");
                 throw;
             }
+        }
+
+        public OrderDetails GetOrderDetailsById(int orderId)
+        {
+            try
+            {
+                var orderDetails = (from o in _context.OrderDetails where o.Id == orderId select o).FirstOrDefault();
+                return orderDetails;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Some error happened while fetching order details from Database.");
+                throw;
+            }
+        }
+
+        public int AddOrRemovePizzaToExistingOrder(UpdateOrderRequestModel updateRequest)
+        {
+            int orderId = 0;
+            try
+            {
+                if (updateRequest.AddPizza.Count != 0)
+                {
+                    foreach (var pizza in updateRequest.AddPizza)
+                    {
+                        _context.OrderDetails.Add(new OrderDetails() { OrderId = updateRequest.OrderId, PizzaId = pizza.Id, Toppings = string.Join(',', pizza.Toppings)});
+                        _context.SaveChanges();
+                    }
+                }
+
+                if (updateRequest.RemovePizza.Count != 0)
+                {
+                    foreach (var pizzaId in updateRequest.RemovePizza)
+                    {
+                        var pizzasToRemove = (from o in _context.OrderDetails where o.OrderId == updateRequest.OrderId && o.PizzaId == pizzaId select o);
+                        _context.OrderDetails.RemoveRange(pizzasToRemove);
+                    }
+                }
+
+                if (updateRequest.UpdatePizza.Count != 0)
+                {
+                    foreach (var updatePizza in updateRequest.UpdatePizza)
+                    {
+                        var pizza = (from o in _context.OrderDetails where o.OrderId == updateRequest.OrderId && o.PizzaId == updatePizza.Id select o).FirstOrDefault();
+                        _context.OrderDetails.Remove(pizza);
+
+                        _context.OrderDetails.Add(new OrderDetails() { OrderId = updateRequest.OrderId, PizzaId = pizza.Id, Toppings = string.Join(',', pizza.Toppings)});
+                    }
+                }
+                return orderId = updateRequest.OrderId;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Some error happened while adding/removing the pizza to existing order.");
+                throw;
+            }
+        }
+
+        private bool ProcessPayment(PaymentCard cardDetails, decimal costToDeduct)
+        {
+            //Write the code to deduct the money from the payment card. Here we can use payment API like strip etc.
+            //For now I'm hardcoding and returning true as payment status
+            return true;
         }
     }
 }

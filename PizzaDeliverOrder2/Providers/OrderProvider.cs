@@ -18,14 +18,14 @@ namespace PizzaDeliverOrder2.Providers
             _orderRepository = orderRepository;
             _logger = logger;
         }
-        public PlaceOrderResponseModel PlaceOrder(PlaceOrderModel placeOrderRequest)
+        public PlaceOrderResponseModel PlaceOrder(PlaceOrderRequestModel placeOrderRequest)
         {
             try
             {
                 //Calculate the cost of the order
                 decimal finalCost = _orderRepository.CalculateCost(placeOrderRequest);
 
-                //Place the order
+                //Place the order and deduct money from credit card
                 int orderId = _orderRepository.InsertFinalOrder(placeOrderRequest, finalCost);
 
                 return new PlaceOrderResponseModel() { cost = finalCost, orderId = orderId, message = "Order has been placed successfully." };
@@ -65,9 +65,9 @@ namespace PizzaDeliverOrder2.Providers
             }
         }
 
-        public FinalOrders GetOrderDetails(int orderId)
+        public Orders GetOrderDetails(int orderId)
         {
-            FinalOrders orderDetails;
+            Orders orderDetails;
             try
             {
                 orderDetails = _orderRepository.FetchOrderDetails(orderId);
@@ -84,6 +84,25 @@ namespace PizzaDeliverOrder2.Providers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Some error happened while fetching the order details;");
+                throw;
+            }
+        }
+
+        public UpdateResponseModel UpdateOrder(UpdateOrderRequestModel updateRequest)
+        {
+            try
+            {
+                //Add/Remove pizza to existing Order
+                var response = _orderRepository.AddOrRemovePizzaToExistingOrder(updateRequest);
+                if (response == 0)
+                {
+                    throw new Exception();
+                }
+                return new UpdateResponseModel() { orderId = response, message = "Order has been successfully updated."};
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Some error happened while updating the order");
                 throw;
             }
         }

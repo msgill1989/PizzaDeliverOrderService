@@ -65,9 +65,9 @@ C:\Maninder\PizzaDeliverOrder\PizzaDeliverOrder2\PizzaDeliverOrder2\obj\Debug\ne
 C:\Maninder\PizzaDeliverOrder\PizzaDeliverOrder2\PizzaDeliverOrder2\obj\Debug\netcoreapp3.1\PizzaDeliverOrder2.dll
 C:\Maninder\PizzaDeliverOrder\PizzaDeliverOrder2\PizzaDeliverOrder2\obj\Debug\netcoreapp3.1\PizzaDeliverOrder2.pdb
 C:\Maninder\PizzaDeliverOrder\PizzaDeliverOrder2\PizzaDeliverOrder2\obj\Debug\netcoreapp3.1\PizzaDeliverOrder2.genruntimeconfig.cache
-C:\Maninder\PizzaDeliverOrder\PizzaDeliverOrder2\PizzaDeliverOrder2\obj\Debug\netcoreapp3.1\PizzaDeliverOrder2.csproj.AssemblyReference.cache
-C:\Maninder\PizzaDeliverOrder\PizzaDeliverOrder2\PizzaDeliverOrder2\bin\Debug\netcoreapp3.1\log4net.config
 C:\Maninder\PizzaDeliverOrder\PizzaDeliverOrder2\PizzaDeliverOrder2\bin\Debug\netcoreapp3.1\log4net.dll
 C:\Maninder\PizzaDeliverOrder\PizzaDeliverOrder2\PizzaDeliverOrder2\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Configuration.dll
 C:\Maninder\PizzaDeliverOrder\PizzaDeliverOrder2\PizzaDeliverOrder2\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Configuration.Binder.dll
 C:\Maninder\PizzaDeliverOrder\PizzaDeliverOrder2\PizzaDeliverOrder2\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Logging.Log4Net.AspNetCore.dll
+C:\Maninder\PizzaDeliverOrder\PizzaDeliverOrder2\PizzaDeliverOrder2\bin\Debug\netcoreapp3.1\Configuration\log4net.config
+C:\Maninder\PizzaDeliverOrder\PizzaDeliverOrder2\PizzaDeliverOrder2\obj\Debug\netcoreapp3.1\PizzaDeliverOrder2.csproj.AssemblyReference.cache

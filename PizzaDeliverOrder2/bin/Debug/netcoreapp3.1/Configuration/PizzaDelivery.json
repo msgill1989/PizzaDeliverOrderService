@@ -1,5 +1,5 @@
 {
   "connectionString": {
-    "PizzaOrderDb" :  ""
+    "PizzaOrderDb" :  "Server=localhost;Database=PizzaDelivery;User ID=sa;Password=Maninder@123"
   }
 }

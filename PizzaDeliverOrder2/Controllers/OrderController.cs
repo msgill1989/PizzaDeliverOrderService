@@ -25,7 +25,7 @@ namespace PizzaDeliverOrder2.Controllers
         [HttpPost("PlaceOrder")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public ActionResult<PlaceOrderResponseModel> PlaceOrder([FromQuery] PlaceOrderModel? placeOrderRequest)
+        public ActionResult<PlaceOrderResponseModel> PlaceOrder([FromQuery] PlaceOrderRequestModel? placeOrderRequest)
         {
             try
             {
@@ -67,7 +67,7 @@ namespace PizzaDeliverOrder2.Controllers
         [HttpGet("GetOrder")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public ActionResult<FinalOrders> GetOrder(int orderId)
+        public ActionResult<Orders> GetOrder(int orderId)
         {
             try
             {
@@ -90,11 +90,11 @@ namespace PizzaDeliverOrder2.Controllers
         [HttpPatch("UpdateOrder")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public ActionResult<string> UpdateOrder()
+        public ActionResult<UpdateResponseModel> UpdateOrder(UpdateOrderRequestModel updateRequest)
         {
             try
             {
-
+                return _orderProvider.UpdateOrder(updateRequest);
             }
             catch (Exception ex)
             {
@@ -102,7 +102,6 @@ namespace PizzaDeliverOrder2.Controllers
                 var details = ProblemDetailsFactory.CreateProblemDetails(HttpContext, 500, "Internal Server Error", null, "Error while updating the order.");
                 return StatusCode(500, details);
             }
-            return "abc";
         }
     }
 }

@@ -9,14 +9,12 @@ namespace PizzaDeliverOrder2.Repository
 {
     public interface IOrderRepository
     {
-        decimal CalculateCost(PlaceOrderModel placeOrderRequest);
-
-        int InsertFinalOrder(PlaceOrderModel placeOrderRequest, decimal finalCost);
-
+        decimal CalculateCost(PlaceOrderRequestModel placeOrderRequest);
+        int InsertFinalOrder(PlaceOrderRequestModel placeOrderRequest, decimal finalCost);
         bool validateOrderExistence(int orderId);
-
         int DeleteOrder(int orderId);
-
-        FinalOrders FetchOrderDetails(int orderId);
+        Orders FetchOrderDetails(int orderId);
+        OrderDetails GetOrderDetailsById(int orderId);
+        int AddOrRemovePizzaToExistingOrder(UpdateOrderRequestModel updateRequest);
     }
 }

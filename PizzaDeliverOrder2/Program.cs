@@ -16,9 +16,12 @@ namespace PizzaDeliverOrder2
         {
             //CreateHostBuilder(args).Build().Run();
 
-
-            var config = new ConfigurationBuilder().SetBasePath(AppDomain.CurrentDomain.BaseDirectory).AddJsonFile("appsettings.json").Build();
-
+            var path = AppContext.BaseDirectory;
+            var completePath = path + $"Configuration\\PizzaDelivery.json";
+            var config = new ConfigurationBuilder()
+                 .AddJsonFile(completePath, false, true)
+                 .Build();
+                
             Activity.DefaultIdFormat = ActivityIdFormat.W3C;
             Activity.ForceDefaultIdFormat = true;
             var host = new WebHostBuilder()

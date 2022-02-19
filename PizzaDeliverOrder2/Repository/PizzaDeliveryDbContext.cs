@@ -21,12 +21,25 @@ namespace PizzaDeliverOrder2.Repository
         {
             this.dbOptions = dbOptions;
         }
+
+        public DbSet<PizzaDetails> PizzaDetails { get; set; }
+
+        public DbSet<Orders> Orders { get; set; }
+
+        public DbSet<Customer> Customer { get; set; }
+
+        public DbSet<Payment> Payment { get; set; }
+        public DbSet<Topping> Topping { get; set; }
+
         public DbSet<OrderDetails> OrderDetails { get; set; }
 
-        public DbSet<PizzaCost> PizzaCost { get; set; }
-
-        public DbSet<FinalOrders> FinalOrders { get; set; }
-
         public DatabaseFacade Db => Database;
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Orders>()
+                .HasKey(b => b.Id)
+                .HasName("PrimaryKey_OrderId");
+        }
     }
 }

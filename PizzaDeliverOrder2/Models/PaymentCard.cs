@@ -5,12 +5,10 @@ using System.Threading.Tasks;
 
 namespace PizzaDeliverOrder2.Models
 {
-    public class PlaceOrderModel
+    public class PaymentCard
     {
-        public List<Pizza> Pizzas { get; set; }
+        public long CardNumber { get; set; }
         public string CustomerName { get; set; }
-        public int CustomerId { get; set; }
-        public int CustomerPhoneNumber { get; set; }
-
+        public string ExpiryDate { get; set; }
     }
 }

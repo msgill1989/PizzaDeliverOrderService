@@ -12,6 +12,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using PizzaDeliverOrder2.Providers;
+using System.IO;
 
 namespace PizzaDeliverOrder2
 {
@@ -35,6 +36,7 @@ namespace PizzaDeliverOrder2
             services.AddTransient<IOrderRepository, OrderRepository>();
             services.AddTransient<IOrderProvider, OrderProvider>();
 
+            //var configurationForderPath = Directory.G;
             var connectionString = Configuration[$"connectionString:PizzaOrderDb"];
             services.AddDbContextPool<PizzaDeliveryDbContext>(options => options.UseSqlServer(connectionString, sqlServerOptions => { sqlServerOptions.CommandTimeout(120); }));
 
@@ -50,9 +52,9 @@ namespace PizzaDeliverOrder2
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
         {
-            var logFullPath = env.ContentRootPath;
+            var logConfigFullPath = env.ContentRootPath + $"Configuration\\log4net.config";
             this.loggerFactory = loggerFactory;
-            this.loggerFactory.AddLog4Net(logFullPath+"log4net.config");
+            this.loggerFactory.AddLog4Net(logConfigFullPath);
             var logger = loggerFactory.CreateLogger(typeof(Startup));
             if (env.IsDevelopment())
             {
